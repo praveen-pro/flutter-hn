@@ -33,7 +33,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Article> _articles = articles;
   Widget _buildItem(Article article) {
-    return Padding(
+    return new Padding(
+      key: Key(article.text),
       padding: const EdgeInsets.all(8.0),
       child: new ExpansionTile(
         title: new Text(
