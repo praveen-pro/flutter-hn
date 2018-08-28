@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'src/article.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(new MyApp());
 
@@ -8,6 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -26,26 +31,60 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  List<Article> _articles = articles;
+  Widget _buildItem(Article article) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: new ExpansionTile(
+        title: new Text(
+          article.text,
+          style: new TextStyle(fontSize: 24.0),
+        ),
+        children: <Widget>[
+          new Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              new Text("${article.commentsCount} comments"),
+              new IconButton(
+                icon: new Icon(Icons.launch),
+                color: Colors.green,
+                onPressed: () async {
+                  String fakeUrl = "http://${article.domain}";
+                  if (await canLaunch(fakeUrl)) {
+                    launch(fakeUrl);
+                  }
+                },
+              )
+            ],
+          )
+        ],
+//      onTap: () async{
+//        String fakeUrl = "http://${article.domain}";
+//        if(await canLaunch(fakeUrl)) {
+//          launch(fakeUrl);
+//        }
+//      },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-   return new Scaffold(
+    return new Scaffold(
       appBar: new AppBar(
         title: new Text(widget.title),
       ),
-      body: new Center(
-        child: new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Text(
-              'You have pushed the button this many times:',
-            ),
-            new Text(
-              'Hello',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
-        ),
+      body: new RefreshIndicator(
+        onRefresh: () async{
+          await new Future.delayed(const Duration(seconds: 1));
+          setState(() {
+            _articles.removeAt(0);
+          });
+          return;
+        },
+        child: new ListView(
+//        mainAxisAlignment: MainAxisAlignment.center,
+            children: _articles.map(_buildItem).toList()),
       ),
     );
   }
