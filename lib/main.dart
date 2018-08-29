@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 icon: new Icon(Icons.launch),
                 color: Colors.green,
                 onPressed: () async {
-                  String fakeUrl = "http://${article.domain}";
+                  String fakeUrl = "http://${article.url}";
                   if (await canLaunch(fakeUrl)) {
                     launch(fakeUrl);
                   }
